@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.19/"></script>
+    <script>
+      var map;
+
+      require(["esri/map","esri/layers/FeatureLayer","esri/InfoTemplate", "dojo/domReady!"], function(Map, FeatureLayer, InfoTemplate) {
+        map = new Map("map", {
+          basemap: "gray",  //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+          center: [-122.45, 37.75], // longitude, latitude
+          zoom: 5
+        });
+		
+		map.on("click", showPopup);
+	
+		var infoTemp = new InfoTemplate();
+		infoTemp.setTitle("The state of ${state_name}");
+		
+		var featureLayer = new FeatureLayer("http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/2",{outFields:["*"], infoTemplate:infoTemp});
+		map.addLayer(featureLayer);
+
+		function showPopup(evt)
+		{
+			console.log(evt);
+			if (evt.graphic == undefined)
+			{
+				console.log("out");
+				map.infoWindow.anchor = "top";
+				map.infoWindow.setTitle("Point Location");
+				map.infoWindow.setContent("Point is outside")
+				map.infoWindow.show(evt.mapPoint);
+			}			
+		}
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
